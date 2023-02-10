@@ -14,6 +14,17 @@ const getDefaultBasket = () => {
 export const ShopContextProvider = (props) => {
     const [basketItems, setBasketItems] = useState(getDefaultBasket())
 
+    const getTotalBasketAmount = () => {
+        let totalAmount = 0
+        for (const item in basketItems) {
+            if (basketItems[item] > 0) {
+                let itemInfo = PRODUCTS.find((product) => product.id === Number(item))
+                totalAmount += basketItems[item] * itemInfo.price
+            }
+        }
+
+        return totalAmount
+    }
     const addToBasket = (itemId) => {
         setBasketItems((prev) => ({...prev, [itemId]:prev[itemId] +1}))
     }
@@ -21,7 +32,11 @@ export const ShopContextProvider = (props) => {
         setBasketItems((prev) => ({...prev, [itemId]:prev[itemId] -1}))
     }
 
-    const contextValue = {basketItems, addToBasket, removeFromBasket}
+    const updateBasketItemCount = (newAmount, itemId) => {
+        setBasketItems((prev) => ({...prev, [itemId] : newAmount}))
+    }
+
+    const contextValue = {basketItems, addToBasket, removeFromBasket, updateBasketItemCount, getTotalBasketAmount}
 
     console.log(basketItems)
     return <ShopContext.Provider className="" value={contextValue}>{props.children}</ShopContext.Provider>
